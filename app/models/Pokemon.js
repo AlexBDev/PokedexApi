@@ -4,7 +4,8 @@ var Schema = db.Schema;
 var PokemonModel = new Schema({ 
     pokemon_id: 'number',
     name: 'string',
-    types: 'array'
+    types: 'array',
+    moves: 'array'
 });
 
 var Pokemon = db.model('Pokemon', PokemonModel);
