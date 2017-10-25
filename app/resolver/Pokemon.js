@@ -7,7 +7,13 @@ var _ = require('lodash');
 
 module.exports = function (pokemon_id) { 
     return new Promise(function (resolve, reject) {
-        PokemonModel.findOne({"pokemon_id": pokemon_id}, function (err, Pokemon){
+        var query = {"pokemon_id": pokemon_id};
+        
+        if (!_.isInteger(parseInt(pokemon_id))) {
+            var query = {"names.name": {$regex: pokemon_id, $options: 'i'}}
+        }
+
+        PokemonModel.findOne(query, function (err, Pokemon){
             if (err) {
                 reject(err);
 
@@ -17,14 +23,57 @@ module.exports = function (pokemon_id) {
             if (!_.isNil(Pokemon)) {
                 resolve(Pokemon);
             } else {
-                request(BASE_API+'/pokemon/'+pokemon_id, function (error, response, body) {
-                    var responseJson = JSON.parse(body);
-                    
-                    Pokemon = PokemonService.add(responseJson);
-                    Pokemon.save();
+                let promises = 
+                    [
+                        new Promise(function (resolve, reject) { 
+                            request(BASE_API+'/pokemon/'+pokemon_id, function (error, response, body) {
+                                if (error) {
+                                    reject(error);
             
+                                    return;
+                                }
+                        
+                                resolve(JSON.parse(body));
+                            });
+                        }),
+                        new Promise(function (resolve, reject) { 
+                            request(BASE_API+'/pokemon-species/'+pokemon_id, function (error, response, body) {
+                                if (error) {
+                                    reject(error);
+            
+                                    return;
+                                }
+                        
+                                resolve(JSON.parse(body));
+                            });
+                        }),
+                    ];
+
+                Promise.all(promises).then(values => {
+                    let jsonPokemon = values[0];
+                    let jsonSpecies = values[1];
+                    
+                    Pokemon = PokemonService.add(jsonPokemon, jsonSpecies);
+                    Pokemon.save();
+
+
                     resolve(Pokemon);
                 });
+
+                // request(BASE_API+'/pokemon/'+pokemon_id, function (error, response, body) {
+                //     if (error) {
+                //         reject(error);
+
+                //         return;
+                //     }
+
+                //     var responseJson = JSON.parse(body);
+                    
+                //     Pokemon = PokemonService.add(responseJson);
+                //     Pokemon.save();
+            
+                //     resolve(Pokemon);
+                // });
             }
         });
     })

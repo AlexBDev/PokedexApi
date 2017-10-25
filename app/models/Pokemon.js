@@ -1,11 +1,13 @@
 var db = require('../db');
-var Schema = db.Schema;
 
 var PokemonModel = new Schema({ 
     pokemon_id: 'number',
-    name: 'string',
+    names: 'array',
     types: 'array',
-    moves: 'array'
+    moves: 'array',
+    sprites: 'mixed',
+    stats: 'mixed',
+    abilities: 'array'
 });
 
 var Pokemon = db.model('Pokemon', PokemonModel);

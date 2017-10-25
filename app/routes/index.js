@@ -10,4 +10,19 @@ router.get('/pokemon/:id', function(req, res) {
     });
 });
 
+// router.get('/catch/all', function(req, res) {
+//     var promises = [];
+//     var i = 1;
+//         setTimeout(function () {
+//             console.log(i);
+//             promises.push(PokemonResolver(i));
+//             i++;
+//         }.bind(i), 1500);
+
+//     Promise.all(promises).then(function (values) {
+//         res.setHeader('Content-Type', 'application/json');
+//         res.send(JSON.stringify('ok')); 
+//     });
+// });
+
 module.exports = router;
