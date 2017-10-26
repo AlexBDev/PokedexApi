@@ -2,10 +2,10 @@ var express = require('express');
 var router = express.Router();
 var PokemonResolver = require('../resolver/pokemon');
 var PokemonService = require('../services/pokemon');
+var PokemonListResolver = require('../resolver/pokemon-list');
 
 router.get('/list', function (req, res) {
-    PokemonService.findAll(function (err, results) {
-        console.log(results);
+    PokemonListResolver(req.query).then(function (results) {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(results)); 
     });
