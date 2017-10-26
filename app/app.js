@@ -6,8 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var timeout = require('connect-timeout')
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+var pokemon = require('./routes/pokemon');
 
 var app = express();
 
@@ -18,7 +17,6 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-app.use(timeout('1000s'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -30,8 +28,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/', index);
-app.use('/users', users);
+app.use('/pokemon', pokemon);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

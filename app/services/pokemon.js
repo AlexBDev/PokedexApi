@@ -1,8 +1,9 @@
-let PokemonModel = require('../models/Pokemon');
+let PokemonModel = require('../models/pokemon');
+var db = require('../db');
 let _ = require('lodash');
 
 let Pokemon = {
-    add: function (jsonPokemon, jsonSpecies) {
+    build: function (jsonPokemon, jsonSpecies) {
         let poke = new PokemonModel();
         
         poke.pokemon_id = jsonPokemon.id;
@@ -44,6 +45,24 @@ let Pokemon = {
         }
 
         return poke;
+    },
+
+    findOneByNameOrId: function(id, callback) {
+        var query = {"pokemon_id": id};
+        
+        if (!_.isInteger(parseInt(id))) {
+            var query = {"names.name": {$regex: id, $options: 'i'}}
+        }
+
+        PokemonModel.findOne(query, function (err, Pokemon) {
+            callback(err, Pokemon);
+        });
+    },
+
+    findAll: function(callback) {
+        PokemonModel.find({}, function (err, Pokemon) {
+            callback(err, Pokemon);
+        });
     }
 }
 
